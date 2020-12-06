@@ -39,4 +39,32 @@ public class AccountService {
         
         return null;
     }
+    
+    public boolean forgotPassword(String email, String path) throws Exception{
+    
+        UserDB userDB = new UserDB();
+        User user = userDB.get(email);
+        
+        if (user != null) {
+				
+                Logger.getLogger(AccountService.class.getName()).log(Level.INFO, "Forgotten Password requested by {0}", email);
+   				
+                String to = user.getEmail();
+                String subject = "Notes App Forgot Password";
+                String template = path + "/emailtemplates/forgot.html";
+                
+                HashMap<String, String> tags = new HashMap<>();
+                tags.put("firstname", user.getFirstName());
+                tags.put("lastname", user.getLastName());
+                tags.put("username", user.getEmail());
+                tags.put("password", user.getPassword());
+                 
+                GmailService.sendMail(to, subject, template, tags);
+
+                return true;
+                
+            } else{           
+                return false;
+            } 
+    }   
 }
